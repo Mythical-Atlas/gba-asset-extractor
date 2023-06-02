@@ -34,10 +34,22 @@ public:
 	Texture invertFontTexture;
 	Texture fontTexture;
 	Texture wireTexture;
+	Texture tileTexture;
 
 	Sprite invertFontSprite;
 	Sprite fontSprite;
 	Sprite wireSprite;
+	Sprite tileSprite;
+
+	std::ifstream romFile;
+
+	uint32_t palette[16] = {
+		0xb0e0f8ff, 0xf8f8f8ff, 0x303030ff, 0xb86800ff, 0xe89048ff, 0xf0d848ff, 0xf07868ff, 0xf0a070ff,
+		0xf8c890ff, 0x885840ff, 0x406090ff, 0x5088b8ff, 0x60a8e0ff, 0xf83050ff, 0xd80028ff, 0xb00000ff
+	};
+
+	int32_t tileOffset;
+	uint32_t tileTextureOffset;
 
 	void load();
 	void init(class Window* window, class Game* game);
@@ -46,6 +58,9 @@ public:
 	void unload();
 
 	void handleEvent(SDL_Event* event);
+
+	void initTexture();
+	void updateTexture(int tileMovement);
 
 	void renderString(Sprite font, vec2 pos, string text, RenderProgram* rp, RenderBuffer* rb) {
 		int line = 0;
