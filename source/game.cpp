@@ -1,5 +1,5 @@
 #include "game.hpp"
-#include "mapState.hpp"
+#include "mainState.hpp"
 
 void Game::changeState(int state) {
     if(this->state != nullptr) {this->state->unload();}
@@ -13,7 +13,7 @@ void Game::changeState(int state) {
 void Game::init(Window* window) {
     this->window = window;
 
-    states[0] = new MapState;
+    states[0] = new MainState;
 
     state = nullptr;
 

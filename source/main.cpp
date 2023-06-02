@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* args[]) {
 	Window window;
-	window.init(false, 1900, 1000, "Zilog Z80 Simulator");
+	window.init(false, 1280, 720, "GBA Asset Extractor");
 
 	Game game;
 	game.init(&window);
