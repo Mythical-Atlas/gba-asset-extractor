@@ -88,20 +88,48 @@ void MainState::update(Window* window, Game* game)  {
     }
 }
 
-void MainState::initTexture() {updateTexture(64 * 64);}
+void MainState::initTexture() {
+    uint8_t tileData[4 * 8 * 8];
+    uint8_t rawData[32];
+
+    for(int i = 0; i < 64 * 64; i++) {
+        romFile.seekg(0x1990B4 + i * 32, std::ios::beg);
+        romFile.read((char*)rawData, 32);
+
+        for(int y = 0; y < 8; y++) {
+            for(int x = 0; x < 8; x++) {
+                uint8_t colorIndex = (rawData[y * 4 + (int)(x / 2)] >> ((x % 2) * 4)) & 0xF;
+                if(colorIndex >= 0 && colorIndex <= 15) {
+                    uint32_t color = palette[colorIndex];
+
+                    tileData[(x + y * 8) * 4 + 0] = (color & 0xFF000000) >> 24; // r
+                    tileData[(x + y * 8) * 4 + 1] = (color & 0x00FF0000) >> 16; // g
+                    tileData[(x + y * 8) * 4 + 2] = (color & 0x0000FF00) >>  8; // b
+                    tileData[(x + y * 8) * 4 + 3] = (color & 0x000000FF) >>  0; // a
+                }
+            }
+        }
+
+        glBindTexture(GL_TEXTURE_2D, tileTexture.pointer);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, (i % 64) * 8, (int)(i / 64) * 8, 8, 8, GL_RGBA, GL_UNSIGNED_BYTE, tileData);
+    }
+}
 void MainState::updateTexture(int tileMovement) {
     if(tileMovement == 0) {return;}
 
 	uint8_t tileData[4 * 8 * 8];
     uint8_t rawData[32];
 
-    for(int i = 0; i < abs(tileMovement); i++) {
-        if(tileMovement < 0) {
+    if(tileMovement < 0) {
+        for(int i = 0; i < abs(tileMovement); i++) {
             if(tileTextureOffset > 0) {tileTextureOffset--;}
             else {tileTextureOffset = 64 * 64 - 1;}
         }
+    }
 
-        romFile.seekg(0x1990B4 + tileTextureOffset * 32 + tileOffset * 32, std::ios::beg);
+    for(int i = 0; i < abs(tileMovement); i++) {
+        if(tileMovement < 0) {romFile.seekg(0x1990B4 + (i + tileOffset) * 32, std::ios::beg);}
+        else {romFile.seekg(0x1990B4 + (i + tileOffset + 63 * 64) * 32, std::ios::beg);}
         romFile.read((char*)rawData, 32);
 
         for(int y = 0; y < 8; y++) {
@@ -121,9 +149,14 @@ void MainState::updateTexture(int tileMovement) {
         glBindTexture(GL_TEXTURE_2D, tileTexture.pointer);
         glTexSubImage2D(GL_TEXTURE_2D, 0, (tileTextureOffset % 64) * 8, (int)(tileTextureOffset / 64) * 8, 8, 8, GL_RGBA, GL_UNSIGNED_BYTE, tileData);
         
-        if(tileMovement > 0) {
-            tileTextureOffset++;
-            if(tileTextureOffset >= 64 * 64) {tileTextureOffset = 0;}
+        tileTextureOffset++;
+        if(tileTextureOffset >= 64 * 64) {tileTextureOffset = 0;}
+    }
+
+    if(tileMovement < 0) {
+        for(int i = 0; i < abs(tileMovement); i++) {
+            if(tileTextureOffset > 0) {tileTextureOffset--;}
+            else {tileTextureOffset = 64 * 64 - 1;}
         }
     }
 }
@@ -152,7 +185,8 @@ void MainState::render(Window* window, Game* game)  { // TODO: layering using z 
 
     for(int i = 0; i < 64 * 64; i++) {
         int drawIndex = (i - tileTextureOffset) % (64 * 64);
-        drawIndex = i;
+        //drawIndex = i;
+        //drawIndex = (i - tileOffset) % (64 * 64);
 
         /*tileSprite.pos = vec2((i % 16) * 8,  (int)(i / 16) * 8);
         tileSprite.scale = vec2(1, 1);
