@@ -62,6 +62,46 @@ public:
 	void initTexture();
 	void updateTexture(int tileMovement);
 
+	string hex32(uint32_t value) {
+        char output[8];
+        uint8_t temp;
+        
+        for(int i = 0; i < 8; i++) {
+            temp = (value >> (i * 4)) & 0xF;
+
+            if(temp < 0xA) {output[7 - i] = temp + '0';}
+            else {output[7 - i] = temp - 0xA + 'A';}
+        }
+
+        return string(output);
+    }
+	string hex16(uint16_t value) {
+        char output[4];
+        uint8_t temp;
+        
+        for(int i = 0; i < 4; i++) {
+            temp = (value >> (i * 4)) & 0xF;
+
+            if(temp < 0xA) {output[3 - i] = temp + '0';}
+            else {output[3 - i] = temp - 0xA + 'A';}
+        }
+
+        return string(output);
+    }
+    string hex8(uint8_t value) {
+        char output[2];
+        uint8_t temp;
+        
+        for(int i = 0; i < 2; i++) {
+            temp = (value >> (i * 4)) & 0xF;
+
+            if(temp < 0xA) {output[1 - i] = temp + '0';}
+            else {output[1 - i] = temp - 0xA + 'A';}
+        }
+
+        return string(output);
+    }
+
 	void renderString(Sprite font, vec2 pos, string text, RenderProgram* rp, RenderBuffer* rb) {
 		int line = 0;
 		int offset = 0;

@@ -147,6 +147,9 @@ void MainState::render(Window* window, Game* game)  { // TODO: layering using z 
 
     rp.useViewMatrix(&cam);
 
+    renderString(fontSprite, vec2(600, 100), "tileTextureOffset = 0x" + hex32(tileTextureOffset), &rp, &rb);
+    renderString(fontSprite, vec2(600, 112), "tileOffset = 0x" + hex32(tileOffset), &rp, &rb);
+
     for(int i = 0; i < 64 * 64; i++) {
         int drawIndex = (i - tileTextureOffset) % (64 * 64);
         drawIndex = i;
