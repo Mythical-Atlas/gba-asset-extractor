@@ -4,7 +4,7 @@
 #include "windows.h"
 #include "psapi.h"
 
-#include "mainState.hpp"
+#include "scrollState.hpp"
 #include "audio.hpp"
 
 #define VERTS_SIZE 16
@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void MainState::load()  {
+void ScrollState::load()  {
 	rp = RenderProgram("Sprite Program");
     rp.attachShader(GL_VERTEX_SHADER, "resources/versatileShader.vert");
     rp.attachShader(GL_FRAGMENT_SHADER, "resources/versatileShader.frag");
@@ -55,7 +55,7 @@ void MainState::load()  {
     romFile.seekg(0, ios::end);
     romSize = romFile.tellg();
 }
-void MainState::init(Window* window, Game* game)  {
+void ScrollState::init(Window* window, Game* game)  {
     cam.init((int)window->getScreenSize().x, (int)window->getScreenSize().y);
 
     mixer.init();
@@ -70,7 +70,7 @@ void MainState::init(Window* window, Game* game)  {
     tileTextureOffset = 0;
     initTexture();
 }
-void MainState::update(Window* window, Game* game)  {
+void ScrollState::update(Window* window, Game* game)  {
     time_point<steady_clock> currentTime = steady_clock::now();
     dt = duration_cast<milliseconds>(currentTime - frameStartTime).count();
     frameStartTime = currentTime;
@@ -94,7 +94,7 @@ void MainState::update(Window* window, Game* game)  {
     }
 }
 
-void MainState::initTexture() {
+void ScrollState::initTexture() {
     uint8_t tileData[4 * 8 * 8];
     uint8_t rawData[32];
 
@@ -120,7 +120,7 @@ void MainState::initTexture() {
         glTexSubImage2D(GL_TEXTURE_2D, 0, (i % 64) * 8, (int)(i / 64) * 8, 8, 8, GL_RGBA, GL_UNSIGNED_BYTE, tileData);
     }
 }
-void MainState::updateTexture(int tileMovement) {
+void ScrollState::updateTexture(int tileMovement) {
     if(tileMovement == 0) {return;}
 
 	uint8_t tileData[4 * 8 * 8];
@@ -167,7 +167,7 @@ void MainState::updateTexture(int tileMovement) {
     }
 }
 
-void MainState::render(Window* window, Game* game)  { // TODO: layering using z position
+void ScrollState::render(Window* window, Game* game)  { // TODO: layering using z position
     if(timeSinceInit - debugPrintTimer >= 1000) {
         PROCESS_MEMORY_COUNTERS_EX pmc;
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -202,8 +202,8 @@ void MainState::render(Window* window, Game* game)  { // TODO: layering using z 
         tileSprite.render(&rp, &rb, i % 64, (int)(i / 64));
     }
 }
-void MainState::unload() {
+void ScrollState::unload() {
 	mixer.unload();
 }
 
-void MainState::handleEvent(SDL_Event* event) {controller.handleEvent(event);}
+void ScrollState::handleEvent(SDL_Event* event) {controller.handleEvent(event);}

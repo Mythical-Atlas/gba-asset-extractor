@@ -10,7 +10,7 @@ add_executable(gba_extract
 	include/game.hpp 			source/game.cpp
 	include/graphics.hpp 		source/graphics.cpp
 	include/main.hpp 			source/main.cpp
-	include/mainState.hpp		source/mainState.cpp
+	include/scrollState.hpp		source/scrollState.cpp
 	include/renderBuffer.hpp 	source/renderBuffer.cpp
 	include/renderProgram.hpp 	source/renderProgram.cpp
 	include/window.hpp 			source/window.cpp
