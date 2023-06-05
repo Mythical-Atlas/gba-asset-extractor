@@ -42,6 +42,7 @@ public:
 	Sprite tileSprite;
 
 	std::ifstream romFile;
+	int romSize;
 
 	uint32_t palette[16] = {
 		0xb0e0f8ff, 0xf8f8f8ff, 0x303030ff, 0xb86800ff, 0xe89048ff, 0xf0d848ff, 0xf07868ff, 0xf0a070ff,

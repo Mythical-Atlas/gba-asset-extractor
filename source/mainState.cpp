@@ -52,6 +52,8 @@ void MainState::load()  {
     tileSprite.getData(vertDataBuffer); rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
 
     romFile = ifstream("resources/sma4.gba", ios::binary);
+    romFile.seekg(0, ios::end);
+    romSize = romFile.tellg();
 }
 void MainState::init(Window* window, Game* game)  {
     cam.init((int)window->getScreenSize().x, (int)window->getScreenSize().y);
@@ -78,13 +80,17 @@ void MainState::update(Window* window, Game* game)  {
 
     if(controller.up) {
         controller.up = false;
-        tileOffset -= 64;
-        updateTexture(-64);
+        if((tileOffset - 64) * 32 + 0x1990B4 >= 0) {
+            tileOffset -= 64;
+            updateTexture(-64);
+        }
     }
     if(controller.down) {
         controller.down = false;
-        tileOffset += 64;
-        updateTexture(64);
+        if((tileOffset + 65 * 64) * 32 + 0x1990B4 < romSize) {
+            tileOffset += 64;
+            updateTexture(64);
+        }
     }
 }
 
@@ -180,8 +186,7 @@ void MainState::render(Window* window, Game* game)  { // TODO: layering using z 
 
     rp.useViewMatrix(&cam);
 
-    renderString(fontSprite, vec2(600, 100), "tileTextureOffset = 0x" + hex32(tileTextureOffset), &rp, &rb);
-    renderString(fontSprite, vec2(600, 112), "tileOffset = 0x" + hex32(tileOffset), &rp, &rb);
+    renderString(fontSprite, vec2(1080, 100), "position in rom = 0x" + hex32(tileOffset * 32 + 0x1990B4), &rp, &rb);
 
     for(int i = 0; i < 64 * 64; i++) {
         int drawIndex = (i - tileTextureOffset) % (64 * 64);
@@ -193,7 +198,7 @@ void MainState::render(Window* window, Game* game)  { // TODO: layering using z 
         tileSprite.render(&rp, &rb, i % 64, (int)(i / 64));*/
 
         tileSprite.pos = vec2((drawIndex % 64) * 8,  (int)(drawIndex / 64) * 8);
-        //tileSprite.scale = vec2(2, 2);
+        tileSprite.scale = vec2(2, 2);
         tileSprite.render(&rp, &rb, i % 64, (int)(i / 64));
     }
 }

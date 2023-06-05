@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* args[]) {
 	Window window;
-	window.init(false, 1280, 720, "GBA Asset Extractor");
+	window.init(false, 1824, 1086, "GBA Asset Extractor");
 
 	Game game;
 	game.init(&window);
